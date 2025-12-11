@@ -1,0 +1,27 @@
+from typing import Optional
+from sqlmodel import SQLModel, Field
+from datetime import datetime
+
+
+class Camera(SQLModel, table=True):
+id: Optional[int] = Field(default=None, primary_key=True)
+name: str
+lat: float
+lng: float
+type: str = "speed"
+radius_m: int = 150
+
+
+class UserToken(SQLModel, table=True):
+id: Optional[int] = Field(default=None, primary_key=True)
+user_id: Optional[str] = None
+fcm_token: str
+created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class Challan(SQLModel, table=True):
+id: Optional[int] = Field(default=None, primary_key=True)
+vehicle: str
+camera_id: int
+amount: float
+issued_at: datetime = Field(default_factory=datetime.utcnow)

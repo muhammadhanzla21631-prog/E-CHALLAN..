@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Challan Dashboard - Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .demo-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .demo-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-section h2 {
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .demo-button {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .demo-output {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 100px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .input-group {
+            margin: 1rem 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #9ca3af;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+    </style>
+</head>
+
+<body style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; min-height: 100vh;">
+
+    <div class="demo-container">
+        <h1 style="text-align: center; color: #3b82f6; margin-bottom: 2rem;">
+            🚀 E-Challan New Functions Demo
+        </h1>
+
+        <!-- Session Management Demo -->
+        <div class="demo-section">
+            <h2>1. Session Management</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="username" placeholder="Enter username">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="Enter email">
+                    </div>
+                    <button class="demo-button" onclick="demoSession()">Save Session</button>
+                    <button class="demo-button" onclick="demoGetSession()">Get Session</button>
+                    <button class="demo-button" onclick="Session.clear()">Clear Session</button>
+                </div>
+                <div>
+                    <div class="demo-output" id="sessionOutput">Session data will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Validation Demo -->
+        <div class="demo-section">
+            <h2>2. Form Validation</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="text" id="validateEmail" placeholder="test@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="validatePhone" placeholder="03001234567">
+                    </div>
+                    <div class="input-group">
+                        <label>CNIC</label>
+                        <input type="text" id="validateCnic" placeholder="12345-1234567-1">
+                    </div>
+                    <div class="input-group">
+                        <label>Vehicle Number</label>
+                        <input type="text" id="validateVehicle" placeholder="ABC-1234">
+                    </div>
+                    <button class="demo-button" onclick="demoValidation()">Validate All</button>
+                </div>
+                <div>
+                    <div class="demo-output" id="validationOutput">Validation results will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Formatting Demo -->
+        <div class="demo-section">
+            <h2>3. Data Formatting</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Amount (PKR)</label>
+                        <input type="number" id="amount" value="2500" placeholder="Enter amount">
+                    </div>
+                    <div class="input-group">
+                        <label>Date String</label>
+                        <input type="text" id="dateStr" value="2025-12-10T23:00:00" placeholder="ISO date">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="phoneFormat" value="03001234567">
+                    </div>
+                    <button class="demo-button" onclick="demoFormatting()">Format All</button>
+                </div>
+                <div>
+                    <div class="demo-output" id="formatOutput">Formatted data will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UI Utilities Demo -->
+        <div class="demo-section">
+            <h2>4. UI Utilities</h2>
+            <div>
+                <button class="demo-button" onclick="UI.toast('Success! This is a success message', 'success')">Show
+                    Success Toast</button>
+                <button class="demo-button" onclick="UI.toast('Error! Something went wrong', 'error')">Show Error
+                    Toast</button>
+                <button class="demo-button" onclick="UI.toast('Warning! Please check this', 'warning')">Show Warning
+                    Toast</button>
+                <button class="demo-button" onclick="UI.toast('Info: This is an information message', 'info')">Show Info
+                    Toast</button>
+                <button class="demo-button" onclick="demoLoading()">Demo Loading State</button>
+                <button class="demo-button"
+                    onclick="UI.confirm('Are you sure?', () => UI.toast('Confirmed!', 'success'), () => UI.toast('Cancelled', 'info'))">Show
+                    Confirm Dialog</button>
+                <div class="demo-output" id="uiOutput" style="margin-top: 1rem;">UI demo output...</div>
+            </div>
+        </div>
+
+        <!-- API Demo -->
+        <div class="demo-section">
+            <h2>5. API Functions</h2>
+            <div class="grid-2">
+                <div>
+                    <button class="demo-button" onclick="demoGetCameras()">Get All Cameras</button>
+                    <button class="demo-button" onclick="demoGetDashboard()">Get Dashboard Stats</button>
+                    <button class="demo-button" onclick="demoSearch()">Search Demo</button>
+                    <div class="input-group">
+                        <label>Search Query</label>
+                        <input type="text" id="searchQuery" placeholder="Enter search term">
+                    </div>
+                    <button class="demo-button" onclick="demoCustomSearch()">Custom Search</button>
+                </div>
+                <div>
+                    <div class="demo-output" id="apiOutput" style="max-height: 400px; overflow-y: auto;">API results
+                        will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Demo -->
+        <div class="demo-section">
+            <h2>6. Payment Processing</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Challan ID</label>
+                        <input type="number" id="challanId" value="1" placeholder="Challan ID">
+                    </div>
+                    <div class="input-group">
+                        <label>User ID</label>
+                        <input type="number" id="userId" value="1" placeholder="User ID">
+                    </div>
+                    <div class="input-group">
+                        <label>Payment Method</label>
+                        <select id="paymentMethod">
+                            <option value="jazzcash">JazzCash</option>
+                            <option value="easypay">EasyPay</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="card">Credit/Debit Card</option>
+                        </select>
+                    </div>
+                    <button class="demo-button" onclick="demoPayment()">Create Payment</button>
+                </div>
+                <div>
+                    <div class="demo-output" id="paymentOutput">Payment results will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appeal Demo -->
+        <div class="demo-section">
+            <h2>7. Appeals System</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Challan ID</label>
+                        <input type="number" id="appealChallanId" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label>User ID</label>
+                        <input type="number" id="appealUserId" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Appeal Reason</label>
+                        <textarea id="appealReason" rows="3"
+                            placeholder="Enter reason for appeal (minimum 20 characters)"></textarea>
+                    </div>
+                    <button class="demo-button" onclick="demoAppeal()">Submit Appeal</button>
+                    <button class="demo-button" onclick="demoGetAppeals()">Get All Appeals</button>
+                </div>
+                <div>
+                    <div class="demo-output" id="appealOutput">Appeal results will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Demo -->
+        <div class="demo-section">
+            <h2>8. Export Functions</h2>
+            <div>
+                <button class="demo-button" onclick="demoExportCSV()">Export Challans CSV</button>
+                <button class="demo-button" onclick="demoExportJSON()">Export Sample JSON</button>
+                <div class="demo-output" id="exportOutput">Click export buttons to download files...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Include utilities -->
+    <script src="utils.js"></script>
+
+    <!-- Demo Functions -->
+    <script>
+        // Session Demo
+        function demoSession() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+
+            const user = { username, email, id: 1, role: 'user' };
+            Session.setUser(user);
+
+            document.getElementById('sessionOutput').textContent =
+                'Session saved!\n\n' + JSON.stringify(user, null, 2);
+
+            UI.toast('Session saved successfully!', 'success');
+        }
+
+        function demoGetSession() {
+            const user = Session.getUser();
+            const output = document.getElementById('sessionOutput');
+
+            if (user) {
+                output.textContent = 'Current Session:\n\n' + JSON.stringify(user, null, 2);
+            } else {
+                output.textContent = 'No session found. Please save a session first.';
+            }
+        }
+
+        // Validation Demo
+        function demoValidation() {
+            const email = document.getElementById('validateEmail').value;
+            const phone = document.getElementById('validatePhone').value;
+            const cnic = document.getElementById('validateCnic').value;
+            const vehicle = document.getElementById('validateVehicle').value;
+
+            const results = {
+                email: {
+                    value: email,
+                    valid: Validators.email(email),
+                    message: Validators.email(email) ? '✓ Valid' : '✗ Invalid'
+                },
+                phone: {
+                    value: phone,
+                    valid: Validators.phone(phone),
+                    message: Validators.phone(phone) ? '✓ Valid' : '✗ Invalid format (use 03001234567)'
+                },
+                cnic: {
+                    value: cnic,
+                    valid: Validators.cnic(cnic),
+                    message: Validators.cnic(cnic) ? '✓ Valid' : '✗ Invalid format (use 12345-1234567-1)'
+                },
+                vehicleNumber: {
+                    value: vehicle,
+                    valid: Validators.vehicleNumber(vehicle),
+                    message: Validators.vehicleNumber(vehicle) ? '✓ Valid' : '✗ Invalid format (use ABC-1234)'
+                }
+            };
+
+            let output = 'Validation Results:\n\n';
+            for (const [field, result] of Object.entries(results)) {
+                output += `${field}: ${result.message}\n`;
+            }
+
+            document.getElementById('validationOutput').textContent = output;
+        }
+
+        // Formatting Demo
+        function demoFormatting() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const dateStr = document.getElementById('dateStr').value;
+            const phone = document.getElementById('phoneFormat').value;
+
+            const results = {
+                'Currency': Format.currency(amount),
+                'Date': Format.date(dateStr),
+                'DateTime': Format.datetime(dateStr),
+                'Time Ago': Format.timeAgo(dateStr),
+                'Phone': Format.phone(phone),
+                'Capitalize': Format.capitalize('hello world'),
+                'Status Badge': 'paid → ' + Format.statusBadge('paid')
+            };
+
+            let output = 'Formatted Data:\n\n';
+            for (const [label, value] of Object.entries(results)) {
+                output += `${label}: ${value}\n`;
+            }
+
+            document.getElementById('formatOutput').textContent = output;
+        }
+
+        // Loading Demo
+        function demoLoading() {
+            const output = document.getElementById('uiOutput');
+            UI.showLoading(output);
+
+            setTimeout(() => {
+                output.textContent = 'Loading complete! Data loaded successfully.';
+                UI.toast('Loading finished!', 'success');
+            }, 2000);
+        }
+
+        // API Demos
+        async function demoGetCameras() {
+            const output = document.getElementById('apiOutput');
+            UI.showLoading(output);
+
+            try {
+                const cameras = await API.getCameras();
+                output.textContent = 'Cameras:\n\n' + JSON.stringify(cameras, null, 2);
+                UI.toast(`Loaded ${cameras.length} cameras`, 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Failed to load cameras', 'error');
+            }
+        }
+
+        async function demoGetDashboard() {
+            const output = document.getElementById('apiOutput');
+            UI.showLoading(output);
+
+            try {
+                const stats = await API.getDashboard();
+                output.textContent = 'Dashboard Stats:\n\n' + JSON.stringify(stats, null, 2);
+                UI.toast('Dashboard loaded!', 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Failed to load dashboard', 'error');
+            }
+        }
+
+        async function demoSearch() {
+            demoCustomSearch('ABC');
+        }
+
+        async function demoCustomSearch(query) {
+            if (!query) {
+                query = document.getElementById('searchQuery').value;
+            }
+
+            if (!query) {
+                UI.toast('Please enter a search query', 'warning');
+                return;
+            }
+
+            const output = document.getElementById('apiOutput');
+            UI.showLoading(output);
+
+            try {
+                const results = await API.search(query);
+                output.textContent = 'Search Results:\n\n' + JSON.stringify(results, null, 2);
+                UI.toast('Search complete!', 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Search failed', 'error');
+            }
+        }
+
+        // Payment Demo
+        async function demoPayment() {
+            const challanId = parseInt(document.getElementById('challanId').value);
+            const userId = parseInt(document.getElementById('userId').value);
+            const method = document.getElementById('paymentMethod').value;
+
+            const output = document.getElementById('paymentOutput');
+            UI.showLoading(output);
+
+            try {
+                const payment = await API.createPayment(
+                    challanId,
+                    userId,
+                    method,
+                    'TXN_' + Date.now()
+                );
+
+                output.textContent = 'Payment Created:\n\n' + JSON.stringify(payment, null, 2);
+                UI.toast('Payment created successfully!', 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Payment creation failed: ' + error.message, 'error');
+            }
+        }
+
+        // Appeal Demo
+        async function demoAppeal() {
+            const challanId = parseInt(document.getElementById('appealChallanId').value);
+            const userId = parseInt(document.getElementById('appealUserId').value);
+            const reason = document.getElementById('appealReason').value;
+
+            // Validate reason
+            const validation = validateForm({ reason }, {
+                reason: [
+                    { validator: 'required', message: 'Reason is required' },
+                    { validator: 'minLength', length: 20, message: 'Reason must be at least 20 characters' }
+                ]
+            });
+
+            const output = document.getElementById('appealOutput');
+
+            if (!validation.isValid) {
+                output.textContent = 'Validation Error:\n\n' + validation.errors.reason;
+                UI.toast(validation.errors.reason, 'error');
+                return;
+            }
+
+            UI.showLoading(output);
+
+            try {
+                const appeal = await API.createAppeal(challanId, userId, reason);
+                output.textContent = 'Appeal Submitted:\n\n' + JSON.stringify(appeal, null, 2);
+                UI.toast('Appeal submitted successfully!', 'success');
+                document.getElementById('appealReason').value = '';
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Appeal submission failed: ' + error.message, 'error');
+            }
+        }
+
+        async function demoGetAppeals() {
+            const output = document.getElementById('appealOutput');
+            UI.showLoading(output);
+
+            try {
+                const appeals = await API.getAppeals();
+                output.textContent = 'Appeals:\n\n' + JSON.stringify(appeals, null, 2);
+                UI.toast(`Loaded ${appeals.count} appeals`, 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Failed to load appeals', 'error');
+            }
+        }
+
+        // Export Demos
+        async function demoExportCSV() {
+            const output = document.getElementById('exportOutput');
+            UI.showLoading(output);
+
+            try {
+                const result = await API.exportChallansCSV();
+                Download.csv(result.csv, result.filename);
+                output.textContent = `CSV exported successfully!\nFilename: ${result.filename}`;
+                UI.toast('CSV downloaded!', 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                UI.toast('Export failed', 'error');
+            }
+        }
+
+        function demoExportJSON() {
+            const sampleData = {
+                challans: [
+                    { id: 1, vehicle: 'ABC-1234', amount: 2000, status: 'paid' },
+                    { id: 2, vehicle: 'XYZ-5678', amount: 3000, status: 'unpaid' }
+                ],
+                exportDate: new Date().toISOString()
+            };
+
+            Download.json(sampleData, 'sample_export.json');
+            document.getElementById('exportOutput').textContent = 'JSON exported successfully!';
+            UI.toast('JSON downloaded!', 'success');
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+</body>
+
+</html>

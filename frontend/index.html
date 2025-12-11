@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E‑Challan Predictor</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header style="position: relative;">
+            <div style="position: absolute; right: 0; top: 0; display: flex; gap: 0.5rem; align-items: center;">
+                <a href="analytics.html"
+                    style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.2); border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; border-radius: 0.5rem; font-size: 0.9rem;">📊
+                    Analytics</a>
+                <a href="login.html"
+                    style="padding: 0.5rem 1rem; background: rgba(16, 185, 129, 0.2); border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; border-radius: 0.5rem; font-size: 0.9rem;">👤
+                    Login</a>
+                <button id="themeToggle" onclick="toggleTheme()"
+                    style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;">
+                    ☀️ Light Mode
+                </button>
+            </div>
+            <h1>E‑Challan System</h1>
+            <p class="subtitle">Real-time Camera Monitoring & Violation Detection</p>
+        </header>
+
+        <main class="dashboard-grid">
+            <section class="map-section">
+                <div id="map"></div>
+            </section>
+
+            <aside class="sidebar">
+                <!-- Camera Details Panel -->
+                <div class="card details-card" id="cameraDetails">
+                    <h2>System Stats</h2>
+
+                    <div class="stats-grid"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                        <div
+                            style="padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.5rem; text-align: center;">
+                            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Cameras</span>
+                            <span id="totalCameras"
+                                style="color: #3b82f6; font-weight: bold; font-size: 1.2rem;">--</span>
+                        </div>
+                        <div
+                            style="padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 0.5rem; text-align: center;">
+                            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Violations</span>
+                            <span id="totalViolations"
+                                style="color: #ef4444; font-weight: bold; font-size: 1.2rem;">0</span>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--text-muted);">Revenue Generated</span>
+                        <span id="totalRevenue" style="color: #10b981; font-weight: bold; font-size: 1.2rem;">PKR
+                            0</span>
+                    </div>
+
+                    <h2>Camera Details</h2>
+
+                    <!-- Search and Filter -->
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="cameraSearch" placeholder="🔍 Search cameras..."
+                            style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); margin-bottom: 0.5rem;"
+                            oninput="searchCameras(this.value)">
+
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="filterCameras('all')" id="filterAll" class="filter-btn active">All</button>
+                            <button onclick="filterCameras('active')" id="filterActive"
+                                class="filter-btn">Active</button>
+                            <button onclick="filterCameras('inactive')" id="filterInactive"
+                                class="filter-btn">Inactive</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                        <button onclick="showHeatmap()" class="btn-secondary">📊 Heatmap</button>
+                        <button onclick="exportReport()" class="btn-secondary">📥 Export CSV</button>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label for="citySelect"
+                            style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Jump
+                            to City</label>
+                        <select id="citySelect" onchange="jumpToCity(this.value)"
+                            style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);">
+                            <option value="pakistan">All Pakistan</option>
+                            <option value="karachi">Karachi</option>
+                            <option value="lahore">Lahore</option>
+                            <option value="islamabad">Islamabad</option>
+                            <option value="peshawar">Peshawar</option>
+                            <option value="quetta">Quetta</option>
+                        </select>
+                    </div>
+
+                    <div id="cameraInfo" class="empty-state">
+                        <p>Select a camera on the map to view details.</p>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="card upload-card">
+                    <h2>Upload Evidence</h2>
+                    <div class="upload-controls">
+                        <input type="file" id="fileInput" class="file-input" />
+                        <button onclick="uploadImage()" class="btn-primary">Predict Violation</button>
+                    </div>
+                    <p id="result" class="result-text"></p>
+                </div>
+
+                <!-- Recent Activity Feed -->
+                <div class="card activity-card">
+                    <h2>Live Activity</h2>
+                    <div id="activityFeed" class="activity-feed">
+                        <!-- Activity items will be injected here -->
+                        <div class="activity-item">
+                            <div class="activity-icon warning">!</div>
+                            <div class="activity-content">
+                                <p class="activity-text">Signal Violation Detected</p>
+                                <p class="activity-meta">Mall Road • Just now</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Leaflet Routing Machine JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <script src="map.js"></script>
+</body>
+
+</html>

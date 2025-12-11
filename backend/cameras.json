@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Speed Camera A",
+        "lat": 24.8607,
+        "lng": 67.0011,
+        "type": "speed",
+        "radius_m": 150
+    },
+    {
+        "name": "Red Light X",
+        "lat": 24.8733,
+        "lng": 67.0320,
+        "type": "red_light",
+        "radius_m": 120
+    }
+]

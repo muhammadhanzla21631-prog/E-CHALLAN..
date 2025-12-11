@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - E-Challan System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 1rem;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            Map background: rgba(255, 255, 255, 0.1);
+        }
+
+        .vehicle-lookup {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .vehicle-lookup input {
+            width: 100%;
+            padding: 0.875rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>Map
+    <div class="container">
+        <div class="nav-bar">
+            <h2>📊 Analytics Dashboard</h2>
+            <div class="nav-links">
+                <a href="index.html">🗺️ Map</a>
+                <a href="analytics.html" style="background: rgba(59, 130, 246, 0.2);">📊 Analytics</a>
+                <a href="login.html">👤 Login</a>
+            </div>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Cameras</div>
+                <div class="stat-value" id="totalCameras">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Violations</div>
+                <div class="stat-value" id="totalViolations">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value" id="totalRevenue">PKR --</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average Fine</div>
+                <div class="stat-value" id="avgFine">PKR --</div>
+            </div>
+        </div>
+
+        <!-- Vehicle Lookup -->
+        <div class="vehicle-lookup">
+            <h3>🚗 Vehicle Lookup</h3>
+            <input type="text" id="vehicleInput" placeholder="Enter vehicle registration number (e.g., ABC-123)">
+            <button onclick="lookupVehicle()" class="btn-primary">Search</button>
+            <div id="vehicleResult" class="vehicle-result"></div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-container">
+            <h3>Violation Trends</h3>
+            <canvas id="violationChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Camera Performance</h3>
+            <canvas id="cameraChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Load Analytics Data
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('http://localhost:8000/api/analytics/violations');
+                const data = await response.json();
+
+                document.getElementById('totalCameras').innerText = data.cameras_count;
+                document.getElementById('totalViolations').innerText = data.total_violations;
+                document.getElementById('totalRevenue').innerText = `PKR ${data.total_revenue.toLocaleString()}`;
+                document.getElementById('avgFine').innerText = `PKR ${Math.round(data.avg_fine).toLocaleString()}`;
+
+                // Create charts
+                createViolationChart();
+                createCameraChart();
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        // Create Violation Trends Chart
+        function createViolationChart() {
+            const ctx = document.getElementById('violationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    datasets: [{
+                        label: 'Violations',
+                        data: [12, 19, 15, 25, 22, 30, 18],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#f8fafc' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Camera Performance Chart
+        function createCameraChart() {
+            const ctx = document.getElementById('cameraChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Karachi', 'Lahore', 'Islamabad', 'Peshawar', 'Quetta'],
+                    datasets: [{
+                        label: 'Active Cameras',
+                        data: [20, 5, 5, 5, 5],
+                        backgroundColor: '#10b981'
+                    }, {
+                        label: 'Inactive Cameras',
+                        data: [0, 2, 1, 2, 1],
+                        backgroundColor: '#ef4444'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#f8fafc' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Vehicle Lookup Function
+        async function lookupVehicle() {
+            const vehicleNumber = document.getElementById('vehicleInput').value;
+            const resultDiv = document.getElementById('vehicleResult');
+
+            if (!vehicleNumber) {
+                alert('Please enter a vehicle number');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8000/api/vehicle/${vehicleNumber}`);
+                const data = await response.json();
+
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <h4>Vehicle: ${data.vehicle}</h4>
+                    <p>Total Challans: <strong>${data.total_challans}</strong></p>
+                    <p>Total Fines: <strong>PKR ${data.total_fines.toLocaleString()}</strong></p>
+                    ${data.history.length > 0 ?
+                        `<div style="margin-top: 1rem;">
+                            <strong>Violation History:</strong>
+                            ${data.history.map(h => `<div style="padding: 0.5rem; margin-top: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 0.25rem;">
+                                Challan #${h.id} - Camera #${h.camera_id} - PKR ${h.amount}
+                            </div>`).join('')}
+                        </div>`
+                        : '<p style="margin-top: 1rem; color: #10b981;">No violations found for this vehicle.</p>'
+                    }
+                `;
+            } catch (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '<p style="color: #ef4444;">Error: Vehicle not found or no violations recorded.</p>';
+            }
+        }
+
+        // Load data on page load
+        loadAnalytics();
+    </script>
+</body>
+
+</html>

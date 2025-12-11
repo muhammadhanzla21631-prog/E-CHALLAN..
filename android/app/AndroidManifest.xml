@@ -1,0 +1,16 @@
+<manifest package="com.example.e_challan">
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+
+<application
+android:allowBackup="true"
+android:label="E-Challan">
+<service android:name=".service.MyFirebaseService">
+<intent-filter>
+<action android:name="com.google.firebase.MESSAGING_EVENT" />
+</intent-filter>
+</service>
+</application>
+</manifest>
