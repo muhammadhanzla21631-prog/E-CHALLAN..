@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from typing import List, Optional
 from sqlmodel import select
-from utils.predictors import predict_image
+from utils.predictors import predict_image, get_device_info
+from utils.notifications import send_email_notification, send_whatsapp_notification
 from db import init_db, get_session
 from models import Camera, UserToken, Challan, User, Payment, Appeal
 from fcm import send_push
@@ -43,19 +44,35 @@ def register_fcm(token: UserToken):
 
 
 @app.post('/api/challan')
-def issue_challan(vehicle: str, camera_id: int, amount: float):
+def issue_challan(vehicle: str, camera_id: int, amount: float, user_id: Optional[int] = None):
     with get_session() as s:
-        challan = Challan(vehicle=vehicle, camera_id=camera_id, amount=amount)
+        challan = Challan(vehicle=vehicle, camera_id=camera_id, amount=amount, user_id=user_id)
         s.add(challan)
         s.commit()
         s.refresh(challan)
-        # send push to all registered tokens (demo)
+        
+        # Notification Logic
+        message_body = f"Challan Issued! Vehicle: {vehicle}, Amount: {amount}, ID: {challan.id}"
+        
+        # 1. FCM Push
         tokens = s.exec(select(UserToken)).all()
         for t in tokens:
             try:
                 send_push(t.fcm_token, "New Challan Issued", f"Vehicle {vehicle} fined {amount}", {"type":"challan","id":str(challan.id)})
             except Exception as e:
                 print('FCM error', e)
+                
+        # 2. Email & WhatsApp (if user known)
+        if user_id:
+            user = s.get(User, user_id)
+            if user:
+                # Email
+                if user.email:
+                    send_email_notification(user.email, "E-Challan Notification", message_body)
+                # WhatsApp
+                if user.phone:
+                    send_whatsapp_notification(user.phone, message_body)
+
         return {"ok": True, "challan_id": challan.id}
 
 
@@ -613,3 +630,9 @@ def export_challans_csv():
             csv_data += f"{c.id},{c.vehicle},{c.camera_id},{c.amount},{c.status},{c.violation_type},{c.issued_at}\n"
         
         return {"csv": csv_data, "filename": f"challans_export_{datetime.now().strftime('%Y%m%d')}.csv"}
+
+# 9. System Info
+@app.get('/api/system/info')
+def get_system_info():
+    """Get system and GPU status"""
+    return get_device_info()

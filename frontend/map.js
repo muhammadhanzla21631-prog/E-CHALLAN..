@@ -277,9 +277,18 @@ async function uploadImage() {
             stats.violations++;
             stats.revenue += 2000;
             updateStats();
-            alert(`Violation Detected: ${prediction}\nChallan of PKR 2000 issued.`);
+
+            let msg = `Violation Detected: ${prediction}. Challan of PKR 2000 issued.`;
+
+            if (prediction.toLowerCase().includes("speed")) {
+                msg = `Over Speed Detected! Please Slow Speed. Challan Issued.`;
+            }
+
+            showNotification(msg, 'warning');
+            // speak(msg); // showNotification already handles speaking
         } else {
             resultElement.style.color = "#10b981";
+            speak(`No violation detected: ${prediction}`);
         }
 
     } catch (error) {
@@ -519,10 +528,54 @@ function showNotification(message, type = 'info') {
     notif.innerText = message;
     document.body.appendChild(notif);
 
+    // Speak the notification if voice is enabled
+    if (type === 'warning') {
+        speak(`Alert: ${message}`);
+    } else {
+        speak(message);
+    }
+
     setTimeout(() => {
         notif.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => document.body.removeChild(notif), 300);
     }, 3000);
+}
+
+// Voice Alert Logic
+let voiceEnabled = false;
+const synth = window.speechSynthesis;
+
+function toggleVoice() {
+    voiceEnabled = !voiceEnabled;
+    const btn = document.getElementById('voiceToggle');
+
+    if (voiceEnabled) {
+        btn.innerText = '🔊 Voice On';
+        btn.style.background = 'rgba(16, 185, 129, 0.2)';
+        btn.style.borderColor = '#10b981';
+        speak("Voice alerts enabled");
+    } else {
+        btn.innerText = '🔇 Voice Off';
+        btn.style.background = 'transparent';
+        btn.style.borderColor = 'var(--border-color)';
+        synth.cancel(); // Stop speaking immediately
+    }
+}
+
+function speak(text) {
+    if (!voiceEnabled) return;
+    if (synth.speaking) {
+        // Optional: cancel previous or queue? For alerts, usually we want immediate feedback, 
+        // but maybe not cutting off the previous one instantly if it's important.
+        // Let's just let it queue naturally or cancel if it's too much.
+        // For now, let's just let it play.
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    synth.speak(utterance);
 }
 
 // Simulate random notifications
@@ -530,10 +583,13 @@ setInterval(() => {
     if (Math.random() > 0.8) {
         const messages = [
             'New challan issued in Karachi',
-            'Speed limit exceeded - Mall Road',
+            'Over Speed Detected - Mall Road. Slow Speed!',
             'Camera maintenance scheduled',
             'High traffic detected - Jail Road'
         ];
-        showNotification(messages[Math.floor(Math.random() * messages.length)], 'warning');
+        // Only speak warnings or important updates to avoid annoyance
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        const type = msg.includes('maintenance') ? 'info' : 'warning';
+        showNotification(msg, type);
     }
 }, 15000);

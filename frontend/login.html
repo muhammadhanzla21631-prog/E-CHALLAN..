@@ -310,6 +310,19 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            animation: breathe 6s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 25px 70px rgba(59, 130, 246, 0.2);
+            }
         }
 
         .login-card::before {
@@ -636,6 +649,58 @@
 
         .btn-login.loading .loading-spinner {
             display: inline-block;
+        }
+
+        /* Entrance Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .form-group:nth-of-type(1) {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.2s forwards;
+        }
+
+        .form-group:nth-of-type(2) {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.3s forwards;
+        }
+
+        .forgot-password {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.4s forwards;
+        }
+
+        .btn-login {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.5s forwards;
+        }
+
+        .divider {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.6s forwards;
+        }
+
+        .register-link {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.7s forwards;
+        }
+
+        .back-link {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.8s forwards;
         }
     </style>
 </head>

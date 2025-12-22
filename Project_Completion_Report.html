@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Challan Project Completion Report</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+
+        ul {
+            background: #f9f9f9;
+            padding: 20px 40px;
+            border-radius: 5px;
+            border-left: 5px solid #3498db;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .timestamp {
+            float: right;
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="timestamp">Generated: 2025-12-21</div>
+    <h1>E-Challan System - Project Report</h1>
+
+    <h2>1. Project Overview</h2>
+    <p>The E-Challan System is a comprehensive solution designed to automate traffic violation detection and management.
+        It consists of a robust Backend API, a dynamic Web Frontend for monitoring and analytics, and an Android
+        Application for mobile access.</p>
+
+    <h2>2. Backend (FastAPI)</h2>
+    <p>The backend is built using FastAPI and SQLModel, providing a high-performance REST API.</p>
+    <ul>
+        <li><strong>Core API:</strong> Camera management, Challan issuance, and Image Prediction.</li>
+        <li><strong>Authentication:</strong> User Registration and Login with secure password hashing.</li>
+        <li><strong>Database:</strong> SQLite database with SQLModel ORM for efficient data handling.</li>
+        <li><strong>Analytics:</strong> Endpoints for violation stats, revenue, and camera performance.</li>
+        <li><strong>User Management:</strong> Profile viewing and updating.</li>
+        <li><strong>Challan Management:</strong> Detailed history, filtering, and vehicle lookup.</li>
+        <li><strong>Payments:</strong> Payment processing simulation and history tracking.</li>
+        <li><strong>Appeals System:</strong> Users can submit appeals; Admins can review them.</li>
+        <li><strong>Search:</strong> Universal search across vehicles, challans, and cameras.</li>
+        <li><strong>Camera Health:</strong> Monitoring system for camera status and maintenance.</li>
+        <li><strong>Notifications:</strong> Integration with FCM (Push), Email (Gmail), and WhatsApp (Twilio).</li>
+    </ul>
+
+    <h2>3. Frontend (Web)</h2>
+    <p>The web interface is built with HTML, CSS, and Vanilla JavaScript, utilizing Leaflet for mapping.</p>
+    <ul>
+        <li><strong>Interactive Map:</strong> Real-time camera visualization using Leaflet.js.</li>
+        <li><strong>Live Monitoring:</strong> Simulated activity feed and real-time statistics.</li>
+        <li><strong>Violation Detection:</strong> 'Over Speed' and 'Slow Speed' alerts with visual warnings.</li>
+        <li><strong>Dashboard:</strong> Analytics charts for violation trends and camera performance.</li>
+        <li><strong>Vehicle Lookup:</strong> Search tool for vehicle history and fines.</li>
+        <li><strong>Theme Support:</strong> Toggle between Light and Dark modes.</li>
+        <li><strong>Voice Alerts:</strong> Text-to-speech notifications for critical events.</li>
+        <li><strong>Image Upload:</strong> Interface to upload evidence and get AI predictions.</li>
+    </ul>
+
+    <h2>4. Android Application</h2>
+    <p>The Android app is developed using Kotlin and Jetpack Compose.</p>
+    <ul>
+        <li><strong>Modern UI:</strong> Built with Jetpack Compose for a responsive interface.</li>
+        <li><strong>Google Maps Integration:</strong> Displays traffic cameras on a native map.</li>
+        <li><strong>Real-time Data:</strong> Fetches camera data directly from the Backend API.</li>
+        <li><strong>Marker System:</strong> Visual markers for camera locations.</li>
+    </ul>
+
+    <h2>5. Conclusion</h2>
+    <p>The project has successfully implemented the core pillars of a modern traffic management system. The integration
+        between the Backend, Web Frontend, and Android App ensures a seamless flow of data and real-time responsiveness.
+    </p>
+
+    <div class="footer">
+        E-Challan System Project Documentation
+    </div>
+</body>
+
+</html>
